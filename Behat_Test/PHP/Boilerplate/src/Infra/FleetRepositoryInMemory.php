@@ -19,9 +19,18 @@ class FleetRepositoryInMemory implements FleetRepositoryInterface
         return $this->Fleet;
     }
 
+    public function exist(Fleet $Fleet)
+    {
+        if (!array_key_exists($Fleet->fleetId(), $this->Fleet)) {
+            return 0;
+        }else{
+            return null;
+        }
+    }
+
     public function getFleetId(Fleet $Fleet)
     {
-        if (isset($this->Fleet[$Fleet->fleetId()])) {
+        if (!array_key_exists($Fleet->fleetId(), $this->Fleet)) {
             return $this->Fleet[$Fleet->fleetId()];
         }else{
             return null;

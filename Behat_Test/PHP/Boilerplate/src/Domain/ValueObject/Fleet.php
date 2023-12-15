@@ -5,7 +5,7 @@ namespace Behat_Test\Domain\ValueObject;
 class Fleet
 {
     public function __construct(
-        private string $fleetId
+        public string $fleetId
         )
     {
         $this->fleetId = $fleetId;

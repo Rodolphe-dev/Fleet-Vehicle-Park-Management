@@ -6,7 +6,7 @@ function openCon()
     $dbhost = "localhost";
     $dbuser = "root";
     $dbpass = "";
-    $dbname = "behat_test";
+    $dbname = "Behat_Test";
     $conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname) or die("Connect failed: %s\n" . $conn -> error);
     $conn->set_charset('utf8mb4');
     return $conn;
