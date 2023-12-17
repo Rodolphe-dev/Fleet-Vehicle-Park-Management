@@ -1,0 +1,1 @@
+You can see the code coverage inside ```/coverage/index.html```

@@ -21,19 +21,15 @@ class FleetRepositoryInMemory implements FleetRepositoryInterface
 
     public function exist(Fleet $Fleet)
     {
-        if (!array_key_exists($Fleet->fleetId(), $this->Fleet)) {
-            return 0;
-        }else{
-            return null;
-        }
+        return count($this->Fleet);
     }
 
     public function getFleetId(Fleet $Fleet)
     {
-        if (!array_key_exists($Fleet->fleetId(), $this->Fleet)) {
-            return $this->Fleet[$Fleet->fleetId()];
-        }else{
-            return null;
+        foreach ($this->Fleet as $item) {
+            if ($item->fleetId == $Fleet->fleetId()) {
+                return $item->fleetId;
+            }
         }
     }
 

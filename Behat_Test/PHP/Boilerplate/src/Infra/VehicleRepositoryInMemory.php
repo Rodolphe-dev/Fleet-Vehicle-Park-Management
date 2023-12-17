@@ -19,12 +19,17 @@ class VehicleRepositoryInMemory implements VehicleRepositoryInterface
         return $this->Vehicle;
     }
 
+    public function exist(Vehicle $Vehicle)
+    {
+        return count($this->Vehicle);
+    }
+
     public function getThisVehicle(Vehicle $Vehicle)
     {
-        if (isset($this->Vehicle[$Vehicle->plateNumber()])) {
-            return $this->Vehicle[$Vehicle->plateNumber()];
-        }else{
-            return null;
+        foreach ($this->Vehicle as $item) {
+            if ($item->plateNumber == $Vehicle->plateNumber()) {
+                return $item;
+            }
         }
     }
 
@@ -35,9 +40,13 @@ class VehicleRepositoryInMemory implements VehicleRepositoryInterface
 
     public function park(Vehicle $Vehicle)
     {
-        $this->Vehicle[$Vehicle->PlateNumber()]->latitude = $Vehicle->latitude();
-        $this->Vehicle[$Vehicle->PlateNumber()]->longitude = $Vehicle->longitude();
-
-        return $this->Vehicle[$Vehicle->PlateNumber()];
+        foreach ($this->Vehicle as $item) {
+            if ($item->plateNumber == $Vehicle->plateNumber()) {
+                $item->latitude = $Vehicle->latitude();
+                $item->longitude = $Vehicle->longitude();
+                
+                return $item;
+            }
+        }
     }
 }

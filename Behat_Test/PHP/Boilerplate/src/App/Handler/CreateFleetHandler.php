@@ -19,7 +19,7 @@ class CreateFleetHandler
         //Check if fleet exist
         $checkFleet = $this->ReadFleetRepository->exist($Fleet);
         
-        if($this->ReadFleetRepository->exist($Fleet)){
+        if($checkFleet === 0){
             $this->WriteFleetRepository->save($Fleet);
         }
         return $Fleet;
