@@ -7,14 +7,11 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
-
 use Valitron\Validator;
 use Behat_Test\App\Validators\CreateFleetValidator;
-
 use Behat_Test\App\Handler\CreateFleetHandler;
 use Behat_Test\Infra\FleetRepositoryInDB;
 use Behat_Test\Domain\ValueObject\Fleet;
-
 use Behat_Test\Infra\CQRS\ReadFleetRepository;
 use Behat_Test\Infra\CQRS\WriteFleetRepository;
 
@@ -37,8 +34,6 @@ class CreateFleetCommand extends Command
         $this->ReadFleetRepository = new ReadFleetRepository($this->FleetRepository);
         $this->WriteFleetRepository = new WriteFleetRepository($this->FleetRepository);
 
-        $CreateFleetHandler = new CreateFleetHandler($this->ReadFleetRepository, $this->WriteFleetRepository);
-
         $this->fleetId = $fleetId;
 
         parent::__construct();
@@ -56,14 +51,13 @@ class CreateFleetCommand extends Command
         Validator::lang('en');
         $v = new CreateFleetValidator(array('fleetId' => $input->getArgument('fleetId')));
 
-        if($v->validate())
-        {
+        if ($v->validate()) {
             //Check if Fleet exist
             $Fleet = new Fleet($input->getArgument('fleetId'));
 
             $checkFleet = $this->ReadFleetRepository->exist($Fleet);
 
-            if($checkFleet === 0){
+            if ($checkFleet === 0) {
                 $FleetHandler = new CreateFleetHandler($this->ReadFleetRepository, $this->WriteFleetRepository);
                 $fleetId = new Fleet($input->getArgument('fleetId'));
                 $this->Fleet = $FleetHandler($fleetId);
@@ -77,7 +71,7 @@ class CreateFleetCommand extends Command
                 );
 
                 $output->write("Fleet '" . $input->getArgument('fleetId') . "' is register");
-            }else{
+            } else {
                 $output->writeln(
                     [
                     'Fleet Creator',
@@ -90,7 +84,7 @@ class CreateFleetCommand extends Command
             }
 
             return Command::SUCCESS;
-        }else{
+        } else {
             $errors = $v->errors();
 
             $output->writeln(

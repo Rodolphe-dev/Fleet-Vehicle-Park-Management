@@ -8,9 +8,9 @@ interface VehicleRepositoryInterface
 {
     public function getAll(): array;
 
-    public function getThisVehicle(Vehicle $Vehicle);
+    public function getThisVehicle(Vehicle $Vehicle): object;
 
-    public function exist(Vehicle $Vehicle);
+    public function exist(Vehicle $Vehicle): int;
 
     public function save(Vehicle $Vehicle): void;
 

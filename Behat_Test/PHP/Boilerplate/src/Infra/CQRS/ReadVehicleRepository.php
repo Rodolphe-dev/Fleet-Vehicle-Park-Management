@@ -14,17 +14,17 @@ class ReadVehicleRepository
         $this->VehicleRepositoryInterface = $VehicleRepositoryInterface;
     }
 
-    public function getAll()
+    public function getAll(): array
     {
         return $this->VehicleRepositoryInterface->getAll();
     }
 
-    public function exist(Vehicle $Vehicle)
+    public function exist(Vehicle $Vehicle): int
     {
         return $this->VehicleRepositoryInterface->exist($Vehicle);
     }
 
-    public function getThisVehicle(Vehicle $Vehicle)
+    public function getThisVehicle(Vehicle $Vehicle): object
     {
         return $this->VehicleRepositoryInterface->getThisVehicle($Vehicle);
     }

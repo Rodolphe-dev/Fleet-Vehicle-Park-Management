@@ -8,9 +8,9 @@ interface FleetRepositoryInterface
 {
     public function getAll(): array;
 
-    public function getFleetId(Fleet $Fleet);
+    public function getFleetId(Fleet $Fleet): string;
 
-    public function exist(Fleet $Fleet);
+    public function exist(Fleet $Fleet): int;
 
-    public function save(Fleet $Fleet) : void;
+    public function save(Fleet $Fleet): void;
 }

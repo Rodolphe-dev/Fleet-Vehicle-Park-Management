@@ -13,7 +13,7 @@ class WriteFleetRepository
     {
         $this->FleetRepositoryInterface = $FleetRepositoryInterface;
     }
-    
+
     public function save(Fleet $Fleet)
     {
         return $this->FleetRepositoryInterface->save($Fleet);

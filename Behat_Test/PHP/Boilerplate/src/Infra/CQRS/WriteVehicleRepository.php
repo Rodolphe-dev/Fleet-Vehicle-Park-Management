@@ -13,12 +13,12 @@ class WriteVehicleRepository
     {
         $this->VehicleRepositoryInterface = $VehicleRepositoryInterface;
     }
-    
+
     public function save(Vehicle $Vehicle)
     {
         return $this->VehicleRepositoryInterface->save($Vehicle);
     }
-    
+
     public function park(Vehicle $Vehicle)
     {
         return $this->VehicleRepositoryInterface->park($Vehicle);

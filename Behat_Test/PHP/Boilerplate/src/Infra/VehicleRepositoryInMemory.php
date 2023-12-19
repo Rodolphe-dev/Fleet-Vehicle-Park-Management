@@ -19,12 +19,12 @@ class VehicleRepositoryInMemory implements VehicleRepositoryInterface
         return $this->Vehicle;
     }
 
-    public function exist(Vehicle $Vehicle)
+    public function exist(Vehicle $Vehicle): int
     {
         return count($this->Vehicle);
     }
 
-    public function getThisVehicle(Vehicle $Vehicle)
+    public function getThisVehicle(Vehicle $Vehicle): object
     {
         foreach ($this->Vehicle as $item) {
             if ($item->plateNumber == $Vehicle->plateNumber()) {
@@ -44,7 +44,7 @@ class VehicleRepositoryInMemory implements VehicleRepositoryInterface
             if ($item->plateNumber == $Vehicle->plateNumber()) {
                 $item->latitude = $Vehicle->latitude();
                 $item->longitude = $Vehicle->longitude();
-                
+
                 return $item;
             }
         }

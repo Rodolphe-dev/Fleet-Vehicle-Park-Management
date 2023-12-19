@@ -9,8 +9,7 @@ class Vehicle
         public string $plateNumber,
         public float $latitude,
         public float $longitude
-        )
-    {
+    ) {
         $this->fleetId = $fleetId;
         $this->plateNumber = $plateNumber;
         $this->latitude = $latitude;

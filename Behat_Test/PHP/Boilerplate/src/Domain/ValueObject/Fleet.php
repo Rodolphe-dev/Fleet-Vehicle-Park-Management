@@ -6,8 +6,7 @@ class Fleet
 {
     public function __construct(
         public string $fleetId
-        )
-    {
+    ) {
         $this->fleetId = $fleetId;
     }
 

@@ -1,21 +1,15 @@
 <?php
-use Behat\Behat\Context\Context;
-use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
 
+use Behat\Behat\Context\Context;
 use Behat_Test\App\Handler\CreateFleetHandler;
 use Behat_Test\Infra\FleetRepositoryInDB;
 use Behat_Test\Domain\ValueObject\Fleet;
-
 use Behat_Test\App\Handler\RegisterVehicleHandler;
 use Behat_Test\Infra\VehicleRepositoryInDB;
 use Behat_Test\Domain\ValueObject\Vehicle;
-
 use Behat_Test\App\Handler\ParkVehicleHandler;
 use Behat_Test\Domain\ValueObject\Location;
-
 use Behat_Test\App\Handler\LocalizeVehicleHandler;
-
 use Behat_Test\Infra\CQRS\ReadFleetRepository;
 use Behat_Test\Infra\CQRS\WriteFleetRepository;
 use Behat_Test\Infra\CQRS\ReadVehicleRepository;
@@ -55,11 +49,6 @@ class FeatureContext implements Context
 
         $this->ReadVehicleRepository = new ReadVehicleRepository($this->VehicleRepository);
         $this->WriteVehicleRepository = new WriteVehicleRepository($this->VehicleRepository);
-
-        $CreateFleetHandler = new CreateFleetHandler($this->ReadFleetRepository, $this->WriteFleetRepository);
-        $RegisterVehicleHandler = new RegisterVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
-        $ParkVehicleHandler = new ParkVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
-        $LocalizeVehicleHandler = new LocalizeVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
     }
 
     /* REGISTER VEHICLE FEATURE */
@@ -69,9 +58,9 @@ class FeatureContext implements Context
      */
     public function myFleet()
     {
-        $FleetHandler = new CreateFleetHandler($this->ReadFleetRepository, $this->WriteFleetRepository);
+        $fleetHandler = new CreateFleetHandler($this->ReadFleetRepository, $this->WriteFleetRepository);
         $IdFleet = new Fleet('JKL980');
-        $this->Fleet = $FleetHandler($IdFleet);
+        $this->Fleet = $fleetHandler($IdFleet);
     }
 
     /**
@@ -87,7 +76,12 @@ class FeatureContext implements Context
      */
     public function iRegisterThisVehicleIntoMyFleet()
     {
-        $RegisterVehicleHandler = new RegisterVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
+        $RegisterVehicleHandler = new RegisterVehicleHandler(
+            $this->ReadFleetRepository,
+            $this->WriteFleetRepository,
+            $this->ReadVehicleRepository,
+            $this->WriteVehicleRepository
+        );
         $Vehicle = new Vehicle($this->Fleet->fleetId(), $this->PlateNumber, '0', '0');
         $this->Vehicle = $RegisterVehicleHandler($Vehicle);
     }
@@ -97,9 +91,9 @@ class FeatureContext implements Context
      */
     public function thisVehicleShouldBePartOfMyVehicleFleet()
     {
-        if($this->Fleet->fleetId() !== $this->Vehicle->FleetId()) {
+        if ($this->Fleet->fleetId() !== $this->Vehicle->FleetId()) {
             echo 'This vehicle isn\t register in my fleet';
-        }else{
+        } else {
             echo 'This vehicle is register into my fleet';
         }
     }
@@ -109,7 +103,12 @@ class FeatureContext implements Context
      */
     public function iHaveRegisteredThisVehicleIntoMyFleet()
     {
-        $RegisterVehicleHandler = new RegisterVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
+        $RegisterVehicleHandler = new RegisterVehicleHandler(
+            $this->ReadFleetRepository,
+            $this->WriteFleetRepository,
+            $this->ReadVehicleRepository,
+            $this->WriteVehicleRepository
+        );
         $Vehicle1 = new Vehicle($this->Fleet->fleetId(), $this->PlateNumber, '0', '0');
         $this->Vehicle1 = $RegisterVehicleHandler($Vehicle1);
     }
@@ -119,7 +118,12 @@ class FeatureContext implements Context
      */
     public function iTryToRegisterThisVehicleIntoMyFleet()
     {
-        $RegisterVehicleHandler = new RegisterVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
+        $RegisterVehicleHandler = new RegisterVehicleHandler(
+            $this->ReadFleetRepository,
+            $this->WriteFleetRepository,
+            $this->ReadVehicleRepository,
+            $this->WriteVehicleRepository
+        );
         $Vehicle2 = new Vehicle($this->Fleet->fleetId(), $this->PlateNumber, '0', '0');
         $this->Vehicle2 = $RegisterVehicleHandler($Vehicle2);
     }
@@ -129,9 +133,13 @@ class FeatureContext implements Context
      */
     public function iShouldBeInformedThisThisVehicleHasAlreadyBeenRegisteredIntoMyFleet()
     {
-        if($this->Vehicle1->FleetId() === $this->Vehicle2->FleetId() and $this->Vehicle1->PlateNUmber() === $this->Vehicle2->PlateNUmber()) {
+        if (
+            $this->Vehicle1->FleetId() === $this->Vehicle2->FleetId()
+            and
+            $this->Vehicle1->PlateNUmber() === $this->Vehicle2->PlateNUmber()
+        ) {
             echo 'This vehicle is already register into my fleet';
-        }else {
+        } else {
             echo 'This vehicle is register';
         }
     }
@@ -151,7 +159,12 @@ class FeatureContext implements Context
      */
     public function thisVehicleHasBeenRegisteredIntoTheOtherUsersFleet()
     {
-        $RegisterVehicleHandler = new RegisterVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
+        $RegisterVehicleHandler = new RegisterVehicleHandler(
+            $this->ReadFleetRepository,
+            $this->WriteFleetRepository,
+            $this->ReadVehicleRepository,
+            $this->WriteVehicleRepository
+        );
         $Vehicle = new Vehicle($this->AnotherFleet->fleetId(), $this->PlateNumber, '0', '0');
         $this->Vehicle = $RegisterVehicleHandler($Vehicle);
     }
@@ -171,12 +184,27 @@ class FeatureContext implements Context
      */
     public function iParkMyVehicleAtThisLocation()
     {
-        $RegisterVehicleHandler = new RegisterVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
+        $RegisterVehicleHandler = new RegisterVehicleHandler(
+            $this->ReadFleetRepository,
+            $this->WriteFleetRepository,
+            $this->ReadVehicleRepository,
+            $this->WriteVehicleRepository
+        );
         $Vehicle = new Vehicle($this->Fleet->fleetId(), $this->PlateNumber, '0', '0');
         $this->Vehicle = $RegisterVehicleHandler($Vehicle);
 
-        $ParkVehicleHandler = new ParkVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
-        $ParkVehicle = new Vehicle($this->Fleet->fleetId(), $this->PlateNumber, $this->Location->latitude(), $this->Location->longitude());
+        $ParkVehicleHandler = new ParkVehicleHandler(
+            $this->ReadFleetRepository,
+            $this->WriteFleetRepository,
+            $this->ReadVehicleRepository,
+            $this->WriteVehicleRepository
+        );
+        $ParkVehicle = new Vehicle(
+            $this->Fleet->fleetId(),
+            $this->PlateNumber,
+            $this->Location->latitude(),
+            $this->Location->longitude()
+        );
         $this->ParkVehicle = $ParkVehicleHandler($ParkVehicle);
     }
 
@@ -185,15 +213,23 @@ class FeatureContext implements Context
      */
     public function theKnownLocationOfMyVehicleShouldVerifyThisLocation()
     {
-        $LocalizeVehicleHandler = new LocalizeVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
+        $LocalizeVehicleHandler = new LocalizeVehicleHandler(
+            $this->ReadFleetRepository,
+            $this->WriteFleetRepository,
+            $this->ReadVehicleRepository,
+            $this->WriteVehicleRepository
+        );
         $LocalizeVehicle = $LocalizeVehicleHandler($this->ParkVehicle, $this->Location);
 
-        if($LocalizeVehicle->latitude === $this->Location->latitude() and $LocalizeVehicle->longitude === $this->Location->longitude()) {
+        if (
+            $LocalizeVehicle->latitude === $this->Location->latitude()
+            and
+            $LocalizeVehicle->longitude === $this->Location->longitude()
+        ) {
             echo 'This vehicle is park at the location';
-        }else {
+        } else {
             echo 'This vehicle is not park at the location';
         }
-        
     }
 
     /**
@@ -201,12 +237,27 @@ class FeatureContext implements Context
      */
     public function myVehicleHasBeenParkedIntoThisLocation()
     {
-        $RegisterVehicleHandler = new RegisterVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
+        $RegisterVehicleHandler = new RegisterVehicleHandler(
+            $this->ReadFleetRepository,
+            $this->WriteFleetRepository,
+            $this->ReadVehicleRepository,
+            $this->WriteVehicleRepository
+        );
         $Vehicle = new Vehicle($this->Fleet->fleetId(), $this->PlateNumber, '0', '0');
         $this->Vehicle = $RegisterVehicleHandler($Vehicle);
 
-        $ParkVehicleHandler = new ParkVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
-        $ParkVehicle = new Vehicle($this->Fleet->fleetId(), $this->PlateNumber, $this->Location->latitude(), $this->Location->longitude());
+        $ParkVehicleHandler = new ParkVehicleHandler(
+            $this->ReadFleetRepository,
+            $this->WriteFleetRepository,
+            $this->ReadVehicleRepository,
+            $this->WriteVehicleRepository
+        );
+        $ParkVehicle = new Vehicle(
+            $this->Fleet->fleetId(),
+            $this->PlateNumber,
+            $this->Location->latitude(),
+            $this->Location->longitude()
+        );
         $this->ParkVehicle = $ParkVehicleHandler($ParkVehicle);
     }
 
@@ -215,7 +266,12 @@ class FeatureContext implements Context
      */
     public function iTryToParkMyVehicleAtThisLocation()
     {
-        $reParkVehicleHandler = new ParkVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
+        $reParkVehicleHandler = new ParkVehicleHandler(
+            $this->ReadFleetRepository,
+            $this->WriteFleetRepository,
+            $this->ReadVehicleRepository,
+            $this->WriteVehicleRepository
+        );
         $reParkVehicle = $reParkVehicleHandler($this->ParkVehicle);
     }
 
@@ -224,18 +280,35 @@ class FeatureContext implements Context
      */
     public function iShouldBeInformedThatMyVehicleIsAlreadyParkedAtThisLocation()
     {
-        $LocalizeVehicleHandler = new LocalizeVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
+        $LocalizeVehicleHandler = new LocalizeVehicleHandler(
+            $this->ReadFleetRepository,
+            $this->WriteFleetRepository,
+            $this->ReadVehicleRepository,
+            $this->WriteVehicleRepository
+        );
         $LocalizeVehicle = $LocalizeVehicleHandler($this->ParkVehicle, $this->Location);
 
-        if($LocalizeVehicle->latitude === $this->Location->latitude and $LocalizeVehicle->longitude === $this->Location->longitude) {
+        if (
+            $LocalizeVehicle->latitude === $this->Location->latitude and
+            $LocalizeVehicle->longitude === $this->Location->longitude
+        ) {
             echo 'This vehicle is already park at this location';
-        }else {
-            $ParkVehicleHandler = new ParkVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
-            $ParkVehicle = new Vehicle($this->Fleet->fleetId(), $this->PlateNumber, $this->Location->latitude(), $this->Location->longitude());
+        } else {
+            $ParkVehicleHandler = new ParkVehicleHandler(
+                $this->ReadFleetRepository,
+                $this->WriteFleetRepository,
+                $this->ReadVehicleRepository,
+                $this->WriteVehicleRepository
+            );
+            $ParkVehicle = new Vehicle(
+                $this->Fleet->fleetId(),
+                $this->PlateNumber,
+                $this->Location->latitude(),
+                $this->Location->longitude()
+            );
             $this->ParkVehicle = $ParkVehicleHandler($ParkVehicle);
 
             echo 'This vehicle is park at this location';
         }
     }
 }
-?>

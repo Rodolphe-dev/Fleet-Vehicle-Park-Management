@@ -1,10 +1,11 @@
 <?php
+
 namespace Behat_Test\App\Validators\Config;
 
 use Valitron\Validator as ValitronValidator;
 
-class Validator extends ValitronValidator {
-
+class Validator extends ValitronValidator
+{
     protected function checkAndSetLabel($field, $message, $params)
     {
         return str_replace('{field}', '', $message);

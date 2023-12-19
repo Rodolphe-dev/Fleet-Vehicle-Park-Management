@@ -19,12 +19,12 @@ class FleetRepositoryInMemory implements FleetRepositoryInterface
         return $this->Fleet;
     }
 
-    public function exist(Fleet $Fleet)
+    public function exist(Fleet $Fleet): int
     {
         return count($this->Fleet);
     }
 
-    public function getFleetId(Fleet $Fleet)
+    public function getFleetId(Fleet $Fleet): string
     {
         foreach ($this->Fleet as $item) {
             if ($item->fleetId == $Fleet->fleetId()) {

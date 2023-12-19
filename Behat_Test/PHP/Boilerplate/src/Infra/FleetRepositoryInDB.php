@@ -2,8 +2,6 @@
 
 namespace Behat_Test\Infra;
 
-require_once  __DIR__ . '/../db_connection.php';
-
 use Behat_Test\Domain\Interface\FleetRepositoryInterface;
 use Behat_Test\Domain\ValueObject\Fleet;
 
@@ -13,6 +11,8 @@ class FleetRepositoryInDB implements FleetRepositoryInterface
 
     public function __construct()
     {
+        require_once  __DIR__ . '/../db_connection.php';
+
         $this->Fleet = [];
     }
 
@@ -20,37 +20,39 @@ class FleetRepositoryInDB implements FleetRepositoryInterface
     {
         $conn = OpenCon();
 
-            $query = "SELECT * FROM fleet";
-            $result = $conn->execute_query($query);
+        $query = "SELECT * FROM fleet";
+        $query_execute = $conn->execute_query($query);
+        $result = $query_execute->fetch_assoc();
 
-            return $result;
-
-        CloseCon($conn);
-    }
-
-    public function getFleetId(Fleet $Fleet)
-    {
-        $conn = OpenCon();
-
-            $query = "SELECT fleetId FROM fleet WHERE fleetId = '" . $Fleet->fleetId() . "'";
-            $query_execute = $conn->execute_query($query);
-            $result = $query_execute->fetch_object();
-
-            return $result;
+        return $result;
 
         CloseCon($conn);
     }
 
-    public function exist(Fleet $Fleet)
+    public function getFleetId(Fleet $Fleet): string
     {
         $conn = OpenCon();
 
-            $query = "SELECT COUNT(*) FROM fleet WHERE fleetId = '" . $Fleet->fleetId() . "'";
-            $query_execute = $conn->execute_query($query);
-            $query_fetch = $query_execute->fetch_assoc();
-            $result = $query_fetch['COUNT(*)'];
+        $query = "SELECT fleetId FROM fleet WHERE fleetId = '" . $Fleet->fleetId() . "'";
+        $query_execute = $conn->execute_query($query);
+        $result = $query_execute->fetch_object();
 
-            return $result;
+        return $result;
+
+        CloseCon($conn);
+    }
+
+
+    public function exist(Fleet $Fleet): int
+    {
+        $conn = OpenCon();
+
+        $query = "SELECT COUNT(*) FROM fleet WHERE fleetId = '" . $Fleet->fleetId() . "'";
+        $query_execute = $conn->execute_query($query);
+        $query_fetch = $query_execute->fetch_assoc();
+        $result = $query_fetch['COUNT(*)'];
+
+        return $result;
 
         CloseCon($conn);
     }
@@ -59,8 +61,8 @@ class FleetRepositoryInDB implements FleetRepositoryInterface
     {
         $conn = OpenCon();
 
-            $query = "INSERT INTO fleet (fleetId) VALUES ('" . $Fleet->fleetId() . "')";
-            $conn->execute_query($query);
+        $query = "INSERT INTO fleet (fleetId) VALUES ('" . $Fleet->fleetId() . "')";
+        $conn->execute_query($query);
 
         CloseCon($conn);
     }

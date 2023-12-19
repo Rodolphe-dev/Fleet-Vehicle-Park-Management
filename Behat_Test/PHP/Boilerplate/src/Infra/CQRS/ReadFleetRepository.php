@@ -14,17 +14,17 @@ class ReadFleetRepository
         $this->FleetRepositoryInterface = $FleetRepositoryInterface;
     }
 
-    public function getAll()
+    public function getAll(): array
     {
         return $this->FleetRepositoryInterface->getAll();
     }
 
-    public function exist(Fleet $Fleet)
+    public function exist(Fleet $Fleet): int
     {
         return $this->FleetRepositoryInterface->exist($Fleet);
     }
 
-    public function getFleetId(Fleet $Fleet)
+    public function getFleetId(Fleet $Fleet): string
     {
         return $this->FleetRepositoryInterface->getFleetId($Fleet);
     }

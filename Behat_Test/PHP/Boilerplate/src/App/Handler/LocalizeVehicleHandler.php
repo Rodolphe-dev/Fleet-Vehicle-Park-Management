@@ -11,8 +11,12 @@ use Behat_Test\Domain\ValueObject\Location;
 
 class LocalizeVehicleHandler
 {
-    public function __construct(private ReadFleetRepository $ReadFleetRepository, private WriteFleetRepository $WriteFleetRepository , private ReadVehicleRepository $ReadVehicleRepository, private WriteVehicleRepository $WriteVehicleRepository)
-    {
+    public function __construct(
+        private ReadFleetRepository $ReadFleetRepository,
+        private WriteFleetRepository $WriteFleetRepository,
+        private ReadVehicleRepository $ReadVehicleRepository,
+        private WriteVehicleRepository $WriteVehicleRepository
+    ) {
     }
 
     public function __invoke(Vehicle $LocalizeVehicle, Location $Location)

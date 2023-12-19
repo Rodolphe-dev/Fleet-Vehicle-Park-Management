@@ -7,18 +7,14 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
-
 use Valitron\Validator;
 use Behat_Test\App\Validators\LocalizeVehicleValidator;
-
 use Behat_Test\Infra\FleetRepositoryInDB;
 use Behat_Test\Domain\ValueObject\Fleet;
-
 use Behat_Test\App\Handler\LocalizeVehicleHandler;
 use Behat_Test\Infra\VehicleRepositoryInDB;
 use Behat_Test\Domain\ValueObject\Vehicle;
 use Behat_Test\Domain\ValueObject\Location;
-
 use Behat_Test\Infra\CQRS\ReadFleetRepository;
 use Behat_Test\Infra\CQRS\WriteFleetRepository;
 use Behat_Test\Infra\CQRS\ReadVehicleRepository;
@@ -30,9 +26,6 @@ class LocalizeVehicleCommand extends Command
 {
     private $fleetId;
     private $plateNumber;
-
-    private Vehicle $Vehicle;
-    private Vehicle $Location;
 
     private FleetRepositoryInDB $FleetRepository;
     private VehicleRepositoryInDB $VehicleRepository;
@@ -54,8 +47,6 @@ class LocalizeVehicleCommand extends Command
         $this->ReadVehicleRepository = new ReadVehicleRepository($this->VehicleRepository);
         $this->WriteVehicleRepository = new WriteVehicleRepository($this->VehicleRepository);
 
-        $LocalizeVehicleHandler = new LocalizeVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
-
         $this->fleetId = $fleetId;
         $this->plateNumber = $plateNumber;
 
@@ -73,10 +64,14 @@ class LocalizeVehicleCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         Validator::lang('en');
-        $v = new LocalizeVehicleValidator(array('fleetId' => $input->getArgument('fleetId'), 'plateNumber' => $input->getArgument('plateNumber')));
+        $v = new LocalizeVehicleValidator(
+            array(
+                'fleetId' => $input->getArgument('fleetId'),
+                'plateNumber' => $input->getArgument('plateNumber')
+            )
+        );
 
-        if($v->validate())
-        {
+        if ($v->validate()) {
             //Check if Fleet exist
             $Fleet = new Fleet($input->getArgument('fleetId'));
             $checkFleet = $this->ReadFleetRepository->getFleetId($Fleet);
@@ -89,58 +84,85 @@ class LocalizeVehicleCommand extends Command
                 if ($checkVehicle === 0) {
                     $output->writeln(
                         [
-                        'Vehicle Localize',
-                        '============',
-                        '',
+                            'Vehicle Localize',
+                            '============',
+                            '',
                         ]
                     );
 
-                    $output->write("Vehicle '" . $input->getArgument('plateNumber') . "' can't be localize because this vehicle doesn't exist");
-                }else{
-                    $LocalizeVehicleHandler = new LocalizeVehicleHandler($this->ReadFleetRepository, $this->WriteFleetRepository, $this->ReadVehicleRepository, $this->WriteVehicleRepository);
-                    $LocalizeVehicleObject = new Vehicle($checkVehicle->fleetId, $checkVehicle->plateNumber, $checkVehicle->latitude, $checkVehicle->longitude);
+                    $output->write(
+                        "Vehicle '" .
+                            $input->getArgument('plateNumber') .
+                            "' can't be localize because this vehicle doesn't exist"
+                    );
+                } else {
+                    $LocalizeVehicleHandler = new LocalizeVehicleHandler(
+                        $this->ReadFleetRepository,
+                        $this->WriteFleetRepository,
+                        $this->ReadVehicleRepository,
+                        $this->WriteVehicleRepository
+                    );
+                    $LocalizeVehicleObject = new Vehicle(
+                        $checkVehicle->fleetId,
+                        $checkVehicle->plateNumber,
+                        $checkVehicle->latitude,
+                        $checkVehicle->longitude
+                    );
                     $LocalizeLocationObject = new Location($checkVehicle->latitude, $checkVehicle->longitude);
                     $getLocalizeVehicle = $LocalizeVehicleHandler($LocalizeVehicleObject, $LocalizeLocationObject);
                     $output->writeln(
                         [
-                        'Vehicle Localize',
-                        '============',
-                        '',
+                            'Vehicle Localize',
+                            '============',
+                            '',
                         ]
                     );
 
-                    $output->write("Vehicle '" . $input->getArgument('plateNumber') . "' is localize at Latitude : '" . $getLocalizeVehicle->latitude . "' and Longitude :  '" . $getLocalizeVehicle->longitude . "'");
+                    $output->write(
+                        "Vehicle '" .
+                            $input->getArgument('plateNumber') .
+                            "' is localize at Latitude : '" .
+                            $getLocalizeVehicle->latitude .
+                            "' and Longitude :  '" .
+                            $getLocalizeVehicle->longitude . "'"
+                    );
                 }
-            }else{
+            } else {
                 $output->writeln(
                     [
-                    'Vehicle Localize',
-                    '============',
-                    '',
+                        'Vehicle Localize',
+                        '============',
+                        '',
                     ]
                 );
 
-                $output->write("Vehicle '" . $input->getArgument('plateNumber') . "' can't be localize because this Fleet '" . $input->getArgument('fleetId') . "' doesn't exist");
+                $output->write(
+                    "Vehicle '" .
+                        $input->getArgument('plateNumber') .
+                    "' can't be localize because this Fleet '" .
+                        $input->getArgument('fleetId') .
+                    "' doesn't exist"
+                );
             }
 
             return Command::SUCCESS;
-        }else{
+        } else {
             $errors = $v->errors();
 
             $output->writeln(
                 [
-                'Vehicle Localize',
-                '============',
-                '',
+                    'Vehicle Localize',
+                    '============',
+                    '',
                 ]
             );
 
             $errors = $v->errors();
-            if(!empty($errors['fleetId'])){
+            if (!empty($errors['fleetId'])) {
                 $output->writeln("Fleet Id" . $errors['fleetId']['0'] . "");
             }
 
-            if(!empty($errors['plateNumber'])){
+            if (!empty($errors['plateNumber'])) {
                 $output->write("Plate Number" . $errors['plateNumber']['0'] . "");
             }
 
