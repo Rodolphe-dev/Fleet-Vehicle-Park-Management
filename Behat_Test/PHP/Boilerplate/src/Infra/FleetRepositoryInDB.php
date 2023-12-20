@@ -34,7 +34,7 @@ class FleetRepositoryInDB implements FleetRepositoryInterface
      * This will get the fleet id
      *
      * @param Fleet $Fleet  Object fleet
-     * @return string|null  Return the fleet id or null if no result
+     * @return object|null  Return the fleet id or null if no result
      */
     public function getFleetId(Fleet $Fleet): object
     {

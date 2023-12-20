@@ -1,14 +1,14 @@
 <?php
+
 namespace PhpUnit_Test\App\Validators;
 
 use PhpUnit_Test\App\Validators\Config\Validator;
 
-class ParkVehicleValidator extends AbstractValidator {
-
+class ParkVehicleValidator extends AbstractValidator
+{
     public function __construct(array $data)
     {
         parent::__construct($data);
-
         $this->validator->rules([
             'required' => [
                 ['fleetId'],
@@ -17,7 +17,6 @@ class ParkVehicleValidator extends AbstractValidator {
                 ['longitude']
             ]
         ]);
-
         $this->validator->rules([
             'lengthBetween' => [
                 ['fleetId', 5, 5],
@@ -26,14 +25,12 @@ class ParkVehicleValidator extends AbstractValidator {
                 ['longitude', 1, 10]
             ]
         ]);
-
         $this->validator->rules([
             'slug' => [
                 ['fleetId'],
                 ['plateNumber']
             ]
         ]);
-
         $this->validator->rules([
             'numeric' => [
                 ['latitude'],

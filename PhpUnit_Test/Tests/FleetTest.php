@@ -1,11 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
-
 use PHPUnit\Framework\TestCase;
-
 use PhpUnit_Test\App\Handler\CreateFleetHandler;
 use PhpUnit_Test\Infra\FleetRepositoryInMemory;
 use PhpUnit_Test\Infra\CQRS\ReadFleetRepository;
@@ -15,14 +14,18 @@ use PhpUnit_Test\Domain\ValueObject\Fleet;
 /**
  * @coversDefaultClass \PhpUnit_Test\Domain\Interface\FleetRepositoryInterface
  */
-class FleetTest extends TestCase{
+class FleetTest extends TestCase
+{
+    private Fleet $Fleet;
+    private FleetRepositoryInMemory $fleetRepository;
+    private ReadFleetRepository $readFleetRepository;
+    private WriteFleetRepository $writeFleetRepository;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->fleetRepository = new FleetRepositoryInMemory();
         $this->readFleetRepository = new ReadFleetRepository($this->fleetRepository);
         $this->writeFleetRepository = new WriteFleetRepository($this->fleetRepository);
-        
         $this->Fleet = new Fleet('JKL990');
     }
 
@@ -37,11 +40,9 @@ class FleetTest extends TestCase{
     {
         $handler = new CreateFleetHandler($this->readFleetRepository, $this->writeFleetRepository);
         $handlerValue = $handler($this->Fleet);
-
         $fleetSaved = $this->readFleetRepository->getFleetId($this->Fleet);
-
         $this->assertNotEmpty($fleetSaved);
-        $this->assertSame($this->Fleet->fleetId(), $fleetSaved); 
+        $this->assertEquals($this->Fleet, $fleetSaved);
     }
 
     /**
@@ -55,15 +56,11 @@ class FleetTest extends TestCase{
     {
         $handler = new CreateFleetHandler($this->readFleetRepository, $this->writeFleetRepository);
         $handlerValue = $handler($this->Fleet);
-
         $fleetList = $this->readFleetRepository->getAll();
-
         $this->assertIsArray($fleetList);
         $this->assertNotEmpty($fleetList);
-
-        $first=$fleetList[0];
-
-        $this->assertInstanceOf(Fleet::class,$first);
+        $first = $fleetList[0];
+        $this->assertInstanceOf(Fleet::class, $first);
     }
 
     /**
@@ -77,9 +74,7 @@ class FleetTest extends TestCase{
     {
         $handler = new CreateFleetHandler($this->readFleetRepository, $this->writeFleetRepository);
         $handlerValue = $handler($this->Fleet);
-
         $fleetExist = $this->readFleetRepository->exist($this->Fleet);
-        
         $this->assertNotEmpty($fleetExist);
         $this->assertIsInt($fleetExist);
     }
@@ -95,11 +90,9 @@ class FleetTest extends TestCase{
     {
         $handler = new CreateFleetHandler($this->readFleetRepository, $this->writeFleetRepository);
         $handlerValue = $handler($this->Fleet);
-
         $fleetGetId = $this->readFleetRepository->getFleetId($this->Fleet);
-        
-        $this->assertNotEmpty($fleetGetId);
-        $this->assertIsString($fleetGetId);
-        $this->assertSame($this->Fleet->fleetId(), $fleetGetId); 
+        $this->assertNotEmpty($fleetGetId->fleetId());
+        $this->assertIsString($fleetGetId->fleetId());
+        $this->assertSame($this->Fleet->fleetId(), $fleetGetId->fleetId());
     }
 }

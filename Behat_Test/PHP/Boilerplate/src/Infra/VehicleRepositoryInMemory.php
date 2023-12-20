@@ -56,12 +56,9 @@ class VehicleRepositoryInMemory implements VehicleRepositoryInterface
         foreach ($this->Vehicle as $item) {
             if ($item->plateNumber == $Vehicle->plateNumber()) {
                 $i++;
-
-                return $i;
-            } else {
-                return 0;
             }
         }
+        return $i;
     }
 
     /**

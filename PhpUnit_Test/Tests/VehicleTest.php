@@ -1,11 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
-
 use PHPUnit\Framework\TestCase;
-
 use PhpUnit_Test\App\Handler\CreateFleetHandler;
 use PhpUnit_Test\App\Handler\RegisterVehicleHandler;
 use PhpUnit_Test\App\Handler\ParkVehicleHandler;
@@ -23,7 +22,11 @@ use PhpUnit_Test\Domain\ValueObject\Location;
 /**
  * @coversDefaultClass \PhpUnit_Test\Domain\Interface\FleetRepositoryInterface
  */
-class VehicleTest extends TestCase{
+class VehicleTest extends TestCase
+{
+    private Fleet $Fleet;
+    private Vehicle $Vehicle;
+    private Location $Location;
 
     private FleetRepositoryInMemory $fleetRepository;
     private VehicleRepositoryInMemory $vehicleRepository;
@@ -32,7 +35,7 @@ class VehicleTest extends TestCase{
     private ReadVehicleRepository $readVehicleRepository;
     private WriteVehicleRepository $writeVehicleRepository;
 
-    protected  function setUp() : void
+    protected function setUp(): void
     {
         $this->fleetRepository = new FleetRepositoryInMemory();
         $this->vehicleRepository = new VehicleRepositoryInMemory();
@@ -40,13 +43,10 @@ class VehicleTest extends TestCase{
         $this->writeFleetRepository = new WriteFleetRepository($this->fleetRepository);
         $this->readVehicleRepository = new ReadVehicleRepository($this->vehicleRepository);
         $this->writeVehicleRepository = new WriteVehicleRepository($this->vehicleRepository);
-
         $this->Fleet = new Fleet('JKL990');
         $fleetHandler = new CreateFleetHandler($this->readFleetRepository, $this->writeFleetRepository);
         $fleetHandlerValue = $fleetHandler($this->Fleet);
-
         $this->Vehicle = new Vehicle($this->Fleet->fleetId(), 'DK-672-GX', 1, 1);
-        
         $this->Location = new Location(48.87, 2.31);
     }
 
@@ -63,12 +63,16 @@ class VehicleTest extends TestCase{
      */
     public function testRegisterVehicle()
     {
-        $handler = new RegisterVehicleHandler($this->readFleetRepository, $this->writeFleetRepository, $this->readVehicleRepository, $this->writeVehicleRepository);        $handlerValue = $handler($this->Vehicle);
-
+        $handler = new RegisterVehicleHandler(
+            $this->readFleetRepository,
+            $this->writeFleetRepository,
+            $this->readVehicleRepository,
+            $this->writeVehicleRepository
+        );
+        $handlerValue = $handler($this->Vehicle);
         $vehicleSaved = $this->readVehicleRepository->getThisVehicle($this->Vehicle);
-
         $this->assertNotEmpty($vehicleSaved);
-        $this->assertEquals($this->Vehicle, $vehicleSaved); 
+        $this->assertEquals($this->Vehicle, $vehicleSaved);
     }
 
     /**
@@ -84,16 +88,18 @@ class VehicleTest extends TestCase{
      */
     public function testGetAllVehicle()
     {
-        $handler = new RegisterVehicleHandler($this->readFleetRepository, $this->writeFleetRepository, $this->readVehicleRepository, $this->writeVehicleRepository);        $handlerValue = $handler($this->Vehicle);
-
+        $handler = new RegisterVehicleHandler(
+            $this->readFleetRepository,
+            $this->writeFleetRepository,
+            $this->readVehicleRepository,
+            $this->writeVehicleRepository
+        );
+        $handlerValue = $handler($this->Vehicle);
         $vehicleList = $this->readVehicleRepository->getAll();
-
         $this->assertIsArray($vehicleList);
         $this->assertNotEmpty($vehicleList);
-
-        $first=$vehicleList[0];
-
-        $this->assertInstanceOf(Vehicle::class,$first);
+        $first = $vehicleList[0];
+        $this->assertInstanceOf(Vehicle::class, $first);
     }
 
     /**
@@ -109,10 +115,14 @@ class VehicleTest extends TestCase{
      */
     public function testExistVehicle()
     {
-        $handler = new RegisterVehicleHandler($this->readFleetRepository, $this->writeFleetRepository, $this->readVehicleRepository, $this->writeVehicleRepository);        $handlerValue = $handler($this->Vehicle);
-
+        $handler = new RegisterVehicleHandler(
+            $this->readFleetRepository,
+            $this->writeFleetRepository,
+            $this->readVehicleRepository,
+            $this->writeVehicleRepository
+        );
+        $handlerValue = $handler($this->Vehicle);
         $vehicleExist = $this->readVehicleRepository->exist($this->Vehicle);
-        
         $this->assertNotEmpty($vehicleExist);
         $this->assertIsInt($vehicleExist);
     }
@@ -130,10 +140,14 @@ class VehicleTest extends TestCase{
      */
     public function testGetThisVehicle()
     {
-        $handler = new RegisterVehicleHandler($this->readFleetRepository, $this->writeFleetRepository, $this->readVehicleRepository, $this->writeVehicleRepository);        $handlerValue = $handler($this->Vehicle);
-
+        $handler = new RegisterVehicleHandler(
+            $this->readFleetRepository,
+            $this->writeFleetRepository,
+            $this->readVehicleRepository,
+            $this->writeVehicleRepository
+        );
+        $handlerValue = $handler($this->Vehicle);
         $vehicleSaved = $this->readVehicleRepository->getThisVehicle($this->Vehicle);
-
         $this->assertNotEmpty($vehicleSaved);
         $this->assertNotEmpty($vehicleSaved->fleetId());
         $this->assertNotEmpty($vehicleSaved->plateNumber());
@@ -143,7 +157,7 @@ class VehicleTest extends TestCase{
         $this->assertIsString($vehicleSaved->plateNumber());
         $this->assertIsFloat($vehicleSaved->latitude());
         $this->assertIsFloat($vehicleSaved->longitude());
-        $this->assertEquals($this->Vehicle, $vehicleSaved); 
+        $this->assertEquals($this->Vehicle, $vehicleSaved);
     }
 
     /**
@@ -160,17 +174,29 @@ class VehicleTest extends TestCase{
      */
     public function testParkVehicle()
     {
-        $handler = new RegisterVehicleHandler($this->readFleetRepository, $this->writeFleetRepository, $this->readVehicleRepository, $this->writeVehicleRepository);        $handlerValue = $handler($this->Vehicle);
-
-        $parkVehicle = new Vehicle($this->Fleet->fleetId(), $this->Vehicle->plateNumber(), $this->Location->latitude(), $this->Location->longitude());
-        
-        $parkHandler = new ParkVehicleHandler($this->readFleetRepository, $this->writeFleetRepository, $this->readVehicleRepository, $this->writeVehicleRepository);
+        $handler = new RegisterVehicleHandler(
+            $this->readFleetRepository,
+            $this->writeFleetRepository,
+            $this->readVehicleRepository,
+            $this->writeVehicleRepository
+        );
+        $handlerValue = $handler($this->Vehicle);
+        $parkVehicle = new Vehicle(
+            $this->Fleet->fleetId(),
+            $this->Vehicle->plateNumber(),
+            $this->Location->latitude(),
+            $this->Location->longitude()
+        );
+        $parkHandler = new ParkVehicleHandler(
+            $this->readFleetRepository,
+            $this->writeFleetRepository,
+            $this->readVehicleRepository,
+            $this->writeVehicleRepository
+        );
         $parkHandlerValue = $parkHandler($parkVehicle);
-        
         $vehicleSaved = $this->readVehicleRepository->getThisVehicle($this->Vehicle);
-
-        $this->assertSame($this->Location->latitude(), $vehicleSaved->latitude()); 
-        $this->assertSame($this->Location->longitude(), $vehicleSaved->longitude()); 
+        $this->assertSame($this->Location->latitude(), $vehicleSaved->latitude());
+        $this->assertSame($this->Location->longitude(), $vehicleSaved->longitude());
     }
 
     /**
@@ -187,19 +213,35 @@ class VehicleTest extends TestCase{
      */
     public function testLocalizeVehicle()
     {
-        $handler = new RegisterVehicleHandler($this->readFleetRepository, $this->writeFleetRepository, $this->readVehicleRepository, $this->writeVehicleRepository);        $handlerValue = $handler($this->Vehicle);
-
-        $parkVehicle = new Vehicle($this->Fleet->fleetId(), $this->Vehicle->plateNumber(), $this->Location->latitude(), $this->Location->longitude());
-        
-        $parkHandler = new ParkVehicleHandler($this->readFleetRepository, $this->writeFleetRepository, $this->readVehicleRepository, $this->writeVehicleRepository);
+        $handler = new RegisterVehicleHandler(
+            $this->readFleetRepository,
+            $this->writeFleetRepository,
+            $this->readVehicleRepository,
+            $this->writeVehicleRepository
+        );
+        $handlerValue = $handler($this->Vehicle);
+        $parkVehicle = new Vehicle(
+            $this->Fleet->fleetId(),
+            $this->Vehicle->plateNumber(),
+            $this->Location->latitude(),
+            $this->Location->longitude()
+        );
+        $parkHandler = new ParkVehicleHandler(
+            $this->readFleetRepository,
+            $this->writeFleetRepository,
+            $this->readVehicleRepository,
+            $this->writeVehicleRepository
+        );
         $parkHandlerValue = $parkHandler($parkVehicle);
-
-        $localizeHandler = new LocalizeVehicleHandler($this->readFleetRepository, $this->writeFleetRepository, $this->readVehicleRepository, $this->writeVehicleRepository);
+        $localizeHandler = new LocalizeVehicleHandler(
+            $this->readFleetRepository,
+            $this->writeFleetRepository,
+            $this->readVehicleRepository,
+            $this->writeVehicleRepository
+        );
         $localizeHandlerValue = $localizeHandler($parkHandlerValue, $this->Location);
-        
         $vehicleSaved = $this->readVehicleRepository->getThisVehicle($this->Vehicle);
-
-        $this->assertSame($this->Location->latitude(), $localizeHandlerValue->latitude()); 
-        $this->assertSame($this->Location->longitude(), $localizeHandlerValue->longitude()); 
+        $this->assertSame($this->Location->latitude(), $localizeHandlerValue->latitude());
+        $this->assertSame($this->Location->longitude(), $localizeHandlerValue->longitude());
     }
 }
