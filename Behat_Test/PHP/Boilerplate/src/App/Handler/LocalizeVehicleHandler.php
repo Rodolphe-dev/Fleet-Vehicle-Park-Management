@@ -16,9 +16,15 @@ class LocalizeVehicleHandler
         private WriteFleetRepository $WriteFleetRepository,
         private ReadVehicleRepository $ReadVehicleRepository,
         private WriteVehicleRepository $WriteVehicleRepository
-    ) {
-    }
+    ) {}
 
+    /**
+     * This will handle the location of a vehicle
+     *
+     * @param Vehicle $LocalizeVehicle  Object vehicle
+     * @param Location $Location  Object Location
+     * @return object|null  Return the vehicle object with data or null if no result
+     */
     public function __invoke(Vehicle $LocalizeVehicle, Location $Location)
     {
         //Get my vehicle

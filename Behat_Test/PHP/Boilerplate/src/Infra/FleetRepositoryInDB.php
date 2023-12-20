@@ -7,15 +7,16 @@ use Behat_Test\Domain\ValueObject\Fleet;
 
 class FleetRepositoryInDB implements FleetRepositoryInterface
 {
-    protected $Fleet;
-
     public function __construct()
     {
         require_once  __DIR__ . '/../db_connection.php';
-
-        $this->Fleet = [];
     }
 
+    /**
+     * This will get the list of all the fleet registered
+     *
+     * @return array|null  Return the result array or null if no results
+     */
     public function getAll(): array
     {
         $conn = OpenCon();
@@ -29,7 +30,13 @@ class FleetRepositoryInDB implements FleetRepositoryInterface
         CloseCon($conn);
     }
 
-    public function getFleetId(Fleet $Fleet): string
+    /**
+     * This will get the fleet id
+     *
+     * @param Fleet $Fleet  Object fleet
+     * @return string|null  Return the fleet id or null if no result
+     */
+    public function getFleetId(Fleet $Fleet): object
     {
         $conn = OpenCon();
 
@@ -42,7 +49,12 @@ class FleetRepositoryInDB implements FleetRepositoryInterface
         CloseCon($conn);
     }
 
-
+    /**
+     * This will check if a fleet exist
+     *
+     * @param Fleet $Fleet  Object fleet
+     * @return integer  Return number of fleet who got the same fleet id
+     */
     public function exist(Fleet $Fleet): int
     {
         $conn = OpenCon();
@@ -57,6 +69,11 @@ class FleetRepositoryInDB implements FleetRepositoryInterface
         CloseCon($conn);
     }
 
+    /**
+     * This will save a fleet
+     *
+     * @param Fleet $Fleet  Object fleet
+     */
     public function save(Fleet $Fleet): void
     {
         $conn = OpenCon();

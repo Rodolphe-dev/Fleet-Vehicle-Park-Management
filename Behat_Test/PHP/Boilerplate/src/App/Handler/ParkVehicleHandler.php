@@ -15,9 +15,14 @@ class ParkVehicleHandler
         private WriteFleetRepository $WriteFleetRepository,
         private ReadVehicleRepository $ReadVehicleRepository,
         private WriteVehicleRepository $WriteVehicleRepository
-    ) {
-    }
+    ) {}
 
+    /**
+     * This will handle to park a vehicle to a location
+     *
+     * @param Vehicle $Vehicle  Object vehicle
+     * @return object|null  Return the vehicle object with data or null if no result
+     */
     public function __invoke(Vehicle $Vehicle)
     {
         //Get my vehicle

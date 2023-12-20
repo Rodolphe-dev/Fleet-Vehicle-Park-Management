@@ -7,15 +7,16 @@ use Behat_Test\Domain\ValueObject\Vehicle;
 
 class VehicleRepositoryInDB implements VehicleRepositoryInterface
 {
-    protected $Vehicle;
-
     public function __construct()
     {
         require_once  __DIR__ . '/../db_connection.php';
-
-        $this->Vehicle = [];
     }
 
+    /**
+     * This will get the list of all the vehicle registered
+     *
+     * @return array|null  Return the result array or null if no results
+     */
     public function getAll(): array
     {
         $conn = OpenCon();
@@ -29,6 +30,12 @@ class VehicleRepositoryInDB implements VehicleRepositoryInterface
         CloseCon($conn);
     }
 
+    /**
+     * This will get the vehicle data
+     *
+     * @param Vehicle $Vehicle  Object vehicle
+     * @return object|null  Return the vehicle object with data or null if no result
+     */
     public function getThisVehicle(Vehicle $Vehicle): object
     {
         $conn = OpenCon();
@@ -46,6 +53,12 @@ class VehicleRepositoryInDB implements VehicleRepositoryInterface
         CloseCon($conn);
     }
 
+    /**
+     * This will check if a vehicle exist
+     *
+     * @param Vehicle $Vehicle  Object Vehicle
+     * @return integer  Return number of vehicle who got the same plateNumber
+     */
     public function exist(Vehicle $Vehicle): int
     {
         $conn = OpenCon();
@@ -64,6 +77,11 @@ class VehicleRepositoryInDB implements VehicleRepositoryInterface
         CloseCon($conn);
     }
 
+    /**
+     * This will save a vehicle
+     *
+     * @param Vehicle $Vehicle  Object vehicle
+     */
     public function save(Vehicle $Vehicle): void
     {
         $conn = OpenCon();
@@ -81,6 +99,12 @@ class VehicleRepositoryInDB implements VehicleRepositoryInterface
         CloseCon($conn);
     }
 
+    /**
+     * This will park a vehicle
+     *
+     * @param Vehicle $Vehicle
+     * @return object|null  Return the vehicle object with data or null if no result
+     */
     public function park(Vehicle $Vehicle)
     {
         $conn = OpenCon();

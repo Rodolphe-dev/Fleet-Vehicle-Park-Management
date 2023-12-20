@@ -11,9 +11,14 @@ class CreateFleetHandler
     public function __construct(
         private ReadFleetRepository $ReadFleetRepository,
         private WriteFleetRepository $WriteFleetRepository
-    ) {
-    }
+    ) {}
 
+    /**
+     * This will handle the creation of a new fleet
+     *
+     * @param Fleet $CreateFleet  Object Fleet
+     * @return object|null  Return the fleet object with data or null if no result
+     */
     public function __invoke(Fleet $CreateFleet)
     {
         $Fleet = new Fleet($CreateFleet->fleetId());
@@ -22,6 +27,7 @@ class CreateFleetHandler
         $checkFleet = $this->ReadFleetRepository->exist($Fleet);
 
         if ($checkFleet === 0) {
+            //Save fleet
             $this->WriteFleetRepository->save($Fleet);
         }
         return $Fleet;

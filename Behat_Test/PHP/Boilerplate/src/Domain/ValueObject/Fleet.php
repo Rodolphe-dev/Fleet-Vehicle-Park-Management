@@ -10,6 +10,11 @@ class Fleet
         $this->fleetId = $fleetId;
     }
 
+    /**
+     * This is the fleet id of a fleet
+     *
+     * @return string
+     */
     public function fleetId(): string
     {
         return $this->fleetId;
